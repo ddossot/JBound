@@ -32,37 +32,7 @@ public final class ExercisesBuilder implements Restriction, Runnable {
 	}
 
 	public void run() {
-		// TODO extract in an exercise runner
-		for (final Class<?> exercisedClass : exercisedClasses) {
-
-			// TODO each test must be run with a catch for acceptable exceptions
-			try {
-
-				final Object exercisedObject = exercisedClass.newInstance();
-
-				if (!skipped.contains(EXERCISE.EQUALS)) {
-					// we do not care about the result of equal, we just check it is to
-					// throwing exceptions.
-					exercisedObject.equals(null);
-					exercisedObject.equals(new Object());
-					exercisedObject.equals(exercisedClass.newInstance());
-				}
-
-				if (!skipped.contains(EXERCISE.HASHCODE)) {
-					// we do not care about the result of hashcode, we just check it is to
-					// throwing exceptions.
-					exercisedObject.hashCode();
-				}
-
-			} catch (final InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (final IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		ExercisesRunner.run(exercisedClasses, skipped);
 	}
 
 }

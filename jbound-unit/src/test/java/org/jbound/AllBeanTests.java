@@ -3,6 +3,7 @@ package org.jbound;
 import org.jbound.api.EXERCISE;
 import org.jbound.api.Exercises;
 import org.jbound.api.JBound;
+import org.jbound.subject.ImmutableBean;
 import org.jbound.subject.InequalMutableBean;
 import org.jbound.subject.MutableBean;
 import org.junit.Test;
@@ -13,7 +14,8 @@ public class AllBeanTests {
 	public void fullyExerciseBeans() {
 		JBound.run(new Exercises() {
 			{
-				forClasses(MutableBean.class, InequalMutableBean.class);
+				forClasses(MutableBean.class, InequalMutableBean.class,
+						ImmutableBean.class);
 			}
 		});
 	}
