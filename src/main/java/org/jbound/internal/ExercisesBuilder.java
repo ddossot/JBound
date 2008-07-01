@@ -34,25 +34,24 @@ public final class ExercisesBuilder implements Restriction, Runnable {
 	public void run() {
 		// TODO extract in an exercise runner
 		for (final Class<?> exercisedClass : exercisedClasses) {
-			System.out.println("*** " + exercisedClass);
 
+			// TODO each test must be run with a catch for acceptable exceptions
 			try {
 
-				final Object exercisedObject1 = exercisedClass.newInstance();
-				final Object exercisedObject2 = exercisedClass.newInstance();
+				final Object exercisedObject = exercisedClass.newInstance();
 
 				if (!skipped.contains(EXERCISE.EQUALS)) {
-					if (!exercisedObject1.equals(exercisedObject2)) {
-						throw new AssertionError(
-								"Two newly created instances are not equal");
-					}
+					// we do not care about the result of equal, we just check it is to
+					// throwing exceptions.
+					exercisedObject.equals(null);
+					exercisedObject.equals(new Object());
+					exercisedObject.equals(exercisedClass.newInstance());
 				}
 
 				if (!skipped.contains(EXERCISE.HASHCODE)) {
-					if (exercisedObject1.hashCode() != exercisedObject2.hashCode()) {
-						throw new AssertionError(
-								"Two newly created instances are not equal");
-					}
+					// we do not care about the result of hashcode, we just check it is to
+					// throwing exceptions.
+					exercisedObject.hashCode();
 				}
 
 			} catch (final InstantiationException e) {
