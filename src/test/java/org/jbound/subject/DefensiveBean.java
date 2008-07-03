@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class MutableBean {
+public class DefensiveBean {
 
 	private String string;
 
@@ -17,12 +17,14 @@ public class MutableBean {
 
 	private List<Long> longs;
 
-	public MutableBean() {
+	public DefensiveBean() {
 		// NOOP
 	}
 
-	public MutableBean(final String string, final int primitiveInteger,
+	public DefensiveBean(final String string, final int primitiveInteger,
 			final Integer integer, final List<Long> longs) {
+
+		defensiveMethod(string);
 
 		this.string = string;
 		this.primitiveInteger = primitiveInteger;
@@ -30,11 +32,19 @@ public class MutableBean {
 		this.longs = longs;
 	}
 
+	private void defensiveMethod(final String string) {
+		if (string == null) {
+			throw new NullPointerException("String can not be null!");
+		}
+	}
+
 	public String getString() {
+		defensiveMethod(string);
 		return string;
 	}
 
 	public void setString(final String string) {
+		defensiveMethod(string);
 		this.string = string;
 	}
 
@@ -86,7 +96,7 @@ public class MutableBean {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final MutableBean other = (MutableBean) obj;
+		final DefensiveBean other = (DefensiveBean) obj;
 		if (integer == null) {
 			if (other.integer != null)
 				return false;

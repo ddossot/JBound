@@ -2,6 +2,8 @@ package org.jbound.subject;
 
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * @author David Dossot (david@dossot.net)
  */
@@ -38,6 +40,11 @@ public class ImmutableBean {
 
 	public List<Long> getLongs() {
 		return longs;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	@Override

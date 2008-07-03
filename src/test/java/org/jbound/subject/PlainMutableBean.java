@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class InequalMutableBean {
+public class PlainMutableBean {
 
 	private String string;
 
@@ -15,11 +15,11 @@ public class InequalMutableBean {
 
 	private List<Long> longs;
 
-	public InequalMutableBean() {
+	public PlainMutableBean() {
 		// NOOP
 	}
 
-	public InequalMutableBean(final String string, final int primitiveInteger,
+	public PlainMutableBean(final String string, final int primitiveInteger,
 			final Integer integer, final List<Long> longs) {
 
 		this.string = string;

@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class MutableBean {
+public class FragileBean {
 
 	private String string;
 
@@ -17,12 +17,14 @@ public class MutableBean {
 
 	private List<Long> longs;
 
-	public MutableBean() {
+	public FragileBean() {
 		// NOOP
 	}
 
-	public MutableBean(final String string, final int primitiveInteger,
+	public FragileBean(final String string, final int primitiveInteger,
 			final Integer integer, final List<Long> longs) {
+
+		fragileMethod(string);
 
 		this.string = string;
 		this.primitiveInteger = primitiveInteger;
@@ -30,11 +32,17 @@ public class MutableBean {
 		this.longs = longs;
 	}
 
+	private void fragileMethod(final String string) {
+		string.length();
+	}
+
 	public String getString() {
+		fragileMethod(string);
 		return string;
 	}
 
 	public void setString(final String string) {
+		fragileMethod(string);
 		this.string = string;
 	}
 
@@ -64,11 +72,14 @@ public class MutableBean {
 
 	@Override
 	public String toString() {
+		fragileMethod(string);
 		return ToStringBuilder.reflectionToString(this);
 	}
 
 	@Override
 	public int hashCode() {
+		fragileMethod(string);
+
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((integer == null) ? 0 : integer.hashCode());
@@ -80,13 +91,15 @@ public class MutableBean {
 
 	@Override
 	public boolean equals(final Object obj) {
+		fragileMethod(string);
+
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final MutableBean other = (MutableBean) obj;
+		final FragileBean other = (FragileBean) obj;
 		if (integer == null) {
 			if (other.integer != null)
 				return false;

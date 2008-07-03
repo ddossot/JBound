@@ -14,59 +14,44 @@ import org.jbound.api.Restriction;
  */
 public final class ExercisesBuilder implements Restriction, Runnable {
 
-    private final List<Class<?>> exercisedClasses;
+	private final List<Class<?>> exercisedClasses;
 
-    private final Set<EXERCISE> skipped;
+	private final Set<EXERCISE> skipped;
 
-    private final Set<String> accepted;
+	private final Set<String> accepted;
 
-    public ExercisesBuilder(final List<Class<?>> exercisedClasses) {
-        this.exercisedClasses = exercisedClasses;
-        skipped = EnumSet.noneOf(EXERCISE.class);
-        accepted = new HashSet<String>();
-    }
+	public ExercisesBuilder(final List<Class<?>> exercisedClasses) {
+		this.exercisedClasses = exercisedClasses;
+		skipped = EnumSet.noneOf(EXERCISE.class);
+		accepted = new HashSet<String>();
+	}
 
-    public Restriction skipping(final EXERCISE exercise,
-            final EXERCISE... additionalExercises) {
+	public Restriction skipping(final EXERCISE... exercises) {
 
-        if (exercise == null) {
-            throw new NullPointerException("Null is not a valid exercice");
-        }
+		if (exercises == null) {
+			throw new NullPointerException("Null is not valid for exercises");
+		}
 
-        if (additionalExercises == null) {
-            throw new NullPointerException(
-                    "Null is not a valid additional exercice");
-        }
+		skipped.addAll(Arrays.asList(exercises));
+		return this;
+	}
 
-        skipped.add(exercise);
-        skipped.addAll(Arrays.asList(additionalExercises));
+	public void run() {
+		new ExercisesRunner(exercisedClasses, skipped, accepted).run();
+	}
 
-        return this;
-    }
+	public Restriction acceptingGenericExceptionsFrom(
+			final String... accessibleSignatures) {
 
-    public void run() {
-        new ExercisesRunner(exercisedClasses, skipped, accepted).run();
-    }
+		if (accessibleSignatures == null) {
+			throw new NullPointerException(
+					"Null is not valid for accessibleSignatures");
+		}
 
-    public Restriction acceptingGenericExceptionsFrom(
-            final String accessibleSignature,
-            final String... additionalAccessibleSignature) {
+		// we merge all the signatures into one set because it is not necessary
+		// to scope them to a particular class or set of classes
+		accepted.addAll(Arrays.asList(accessibleSignatures));
 
-        if (accessibleSignature == null) {
-            throw new NullPointerException(
-                    "Null is not a valid accessible signature");
-        }
-
-        if (additionalAccessibleSignature == null) {
-            throw new NullPointerException(
-                    "Null is not a valid additional accessible signature");
-        }
-
-        // we merge all the signatures into one set because it is not necessary
-        // to scope them to a particular class or set of classes
-        accepted.add(accessibleSignature);
-        accepted.addAll(Arrays.asList(additionalAccessibleSignature));
-
-        return null;
-    }
+		return null;
+	}
 }
