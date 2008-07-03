@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jbound.internal.ExercisesBuilder;
+import org.jbound.exercise.ExercisesBuilder;
 
 /**
  * @author David Dossot (david@dossot.net)

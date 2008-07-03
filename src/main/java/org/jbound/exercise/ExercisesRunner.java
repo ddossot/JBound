@@ -1,4 +1,4 @@
-package org.jbound.internal;
+package org.jbound.exercise;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
