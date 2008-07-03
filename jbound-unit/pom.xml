@@ -4,10 +4,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jbound</groupId>
-	<artifactId>jbound-unit</artifactId>
+	<artifactId>jbound</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>jbound-unit</name>
+	<name>jBound</name>
 	<url>http://jbound.org</url>
 
 	<build>
