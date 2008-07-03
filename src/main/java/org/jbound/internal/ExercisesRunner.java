@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +14,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,289 +23,347 @@ import java.util.Set;
 import org.jbound.api.EXERCISE;
 
 /**
- * FIXME this class is under construction and requires a drastic refactoring.
+ * FIXME this class is GROSS - it is under construction and requires a drastic
+ * refactoring. JBound is still a spike.
  * 
  * @author David Dossot (david@dossot.net)
  */
-public class ExercisesRunner {
+public class ExercisesRunner implements Runnable {
 
-	private static List<Object> newInstancesOf(final Class<?> exercisedClass)
-			throws IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+    private final List<Class<?>> exercisedClasses;
 
-		final List<Object> result = new ArrayList<Object>();
+    private final Set<String> accepted;
 
-		for (final Constructor<?> constructor : exercisedClass.getConstructors()) {
-			result.addAll(newInstancesFrom(constructor, new ArrayList<Object>()));
-		}
+    private final Set<EXERCISE> skipped;
 
-		return Collections.unmodifiableList(result);
-	}
+    public ExercisesRunner(final List<Class<?>> exercisedClasses,
+            final Set<EXERCISE> skipped, final Set<String> accepted) {
+        this.exercisedClasses = exercisedClasses;
+        this.skipped = skipped;
+        this.accepted = accepted;
+    }
 
-	private static List<Object> newInstancesFrom(
-			final Constructor<?> constructor, final List<Object> parameters)
-			throws IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+    private List<Object> newInstancesOf(final Class<?> exercisedClass) {
+        final List<Object> result = new ArrayList<Object>();
 
-		final List<Object> result = new ArrayList<Object>();
+        for (final Constructor<?> constructor : exercisedClass.getConstructors()) {
+            result.addAll(newInstancesFrom(constructor, new ArrayList<Object>()));
+        }
 
-		if (parameters.size() >= constructor.getParameterTypes().length) {
-			result.add(constructor.newInstance(parameters.toArray()));
-		} else {
-			final Class<?> parameterType = constructor.getParameterTypes()[parameters
-					.size()];
+        return Collections.unmodifiableList(result);
+    }
 
-			final Object testValues = TEST_DATA.get(parameterType);
+    private void acceptOrRethrow(final AccessibleObject context,
+            final InvocationTargetException ite) {
 
-			if (testValues == null) {
-				System.err.println(parameterType + " is not yet supported");
-			} else {
+        final Throwable iteCause = ite.getCause();
 
-				final int testValuesCount = Array.getLength(testValues);
-				for (int i = 0; i < testValuesCount; i++) {
-					final List<Object> nextParameters = new ArrayList<Object>(parameters);
-					nextParameters.add(Array.get(testValues, i));
-					result.addAll(newInstancesFrom(constructor, nextParameters));
-				}
-			}
+        if (iteCause == null) {
+            // this is a problem with JBound doing a particular exercise
+            ite.printStackTrace();
+            return;
+        }
 
-		}
+        if (iteCause.getMessage() != null) {
+            // we got an exception but it has a message, so it is probably a
+            // user crafted one, hence we accept it silently
+            return;
+        }
 
-		return result;
-	}
+        final String contextAsString = context.toString();
 
-	public static void run(final List<Class<?>> exercisedClasses,
-			final Set<EXERCISE> skipped) {
+        if (accepted.contains(contextAsString)) {
+            // we have be told to accept this as a source of generic exceptions
+            return;
+        }
 
-		for (final Class<?> exercisedClass : exercisedClasses) {
+        // this is an exception without a message, so most probably a generic
+        // one
+        throw new AssertionError("Received a generic " + iteCause.getClass()
+                + " when calling " + contextAsString);
+    }
 
-			// TODO each test must be run with a catch for acceptable exceptions
-			try {
+    private List<Object> newInstancesFrom(final Constructor<?> constructor,
+            final List<Object> parameters) {
 
-				final List<Object> exercisedObjects = newInstancesOf(exercisedClass);
+        final List<Object> result = new ArrayList<Object>();
 
-				for (final Object exercisedObject : exercisedObjects) {
+        if (parameters.size() >= constructor.getParameterTypes().length) {
+            try {
+                result.add(constructor.newInstance(parameters.toArray()));
+            } catch (final IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (final InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (final IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (final InvocationTargetException e) {
+                acceptOrRethrow(constructor, e);
+            }
+        } else {
+            final Class<?> parameterType =
+                    constructor.getParameterTypes()[parameters.size()];
 
-					if (!skipped.contains(EXERCISE.EQUALS)) {
-						// we do not care about the result of equal, we just check it is to
-						// throwing exceptions.
-						exercisedObject.equals(null);
-						exercisedObject.equals(new Object());
+            final Object testValues = getTestDataFor(parameterType);
 
-						for (final Object exercisedObjectBis : exercisedObjects) {
-							exercisedObject.equals(exercisedObjectBis);
-						}
-					}
+            final int testValuesCount = Array.getLength(testValues);
+            for (int i = 0; i < testValuesCount; i++) {
+                final List<Object> nextParameters =
+                        new ArrayList<Object>(parameters);
 
-					if (!skipped.contains(EXERCISE.HASHCODE)) {
-						// we do not care about the result of hashcode, we just check it is
-						// to throwing exceptions.
-						exercisedObject.hashCode();
-					}
+                nextParameters.add(Array.get(testValues, i));
+                result.addAll(newInstancesFrom(constructor, nextParameters));
+            }
 
-					if (!skipped.contains(EXERCISE.BEAN_PROPERTIES)) {
-						try {
-							final BeanInfo beanInfo = Introspector
-									.getBeanInfo(exercisedClass);
+        }
 
-							final PropertyDescriptor[] propertyDescriptors = beanInfo
-									.getPropertyDescriptors();
+        return result;
+    }
 
-							if (propertyDescriptors != null) {
-								for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-									final Method readMethod = propertyDescriptor.getReadMethod();
+    public void run() {
+        for (final Class<?> exercisedClass : exercisedClasses) {
 
-									if (readMethod != null) {
-										try {
-											readMethod.invoke(exercisedObject);
-										} catch (final IllegalArgumentException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										} catch (final InvocationTargetException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
+            System.out.println("Exercising class: " + exercisedClass);
 
-									final Method writeMethod = propertyDescriptor
-											.getWriteMethod();
+            // TODO each test must be run with a catch for acceptable exceptions
+            try {
 
-									if (writeMethod != null) {
-										final Class<?> setterParameterClass = writeMethod
-												.getParameterTypes()[0];
+                final List<Object> exercisedObjects =
+                        newInstancesOf(exercisedClass);
 
-										// TODO exctract interface based method
-										final Object testValues = TEST_DATA
-												.get(setterParameterClass);
+                for (final Object exercisedObject : exercisedObjects) {
 
-										if (testValues == null) {
-											System.err.println(setterParameterClass
-													+ " is not yet supported");
-										} else {
+                    // we do not care about the actual result of equal, hashcode
+                    // or toString, we just check it is not throwing exceptions.
+                    // FIXME accept generic exceptions from these 3 guys
+                    if (!skipped.contains(EXERCISE.EQUALS)) {
+                        exercisedObject.equals(null);
+                        exercisedObject.equals(new Object());
 
-											final int testValuesCount = Array.getLength(testValues);
-											for (int i = 0; i < testValuesCount; i++) {
-												try {
-													writeMethod.invoke(exercisedObject, Array.get(
-															testValues, i));
-												} catch (final ArrayIndexOutOfBoundsException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (final IllegalArgumentException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (final InvocationTargetException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
-											}
-										}
-									}
-								}
-							}
+                        for (final Object exercisedObjectBis : exercisedObjects) {
+                            exercisedObject.equals(exercisedObjectBis);
+                        }
+                    }
 
-						} catch (final IntrospectionException ie) {
-							// TODO Auto-generated catch block
-							ie.printStackTrace();
-						}
-					}
-				}
+                    if (!skipped.contains(EXERCISE.HASHCODE)) {
+                        exercisedObject.hashCode();
+                    }
 
-			} catch (final InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (final IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (final IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (final InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+                    if (!skipped.contains(EXERCISE.TO_STRING)) {
+                        exercisedObject.toString();
+                    }
 
-	}
+                    if (!skipped.contains(EXERCISE.BEAN_PROPERTIES)) {
+                        try {
+                            final BeanInfo beanInfo =
+                                    Introspector.getBeanInfo(exercisedClass);
 
-	private static final Map<Class<?>, Object> TEST_DATA = new HashMap<Class<?>, Object>();
+                            final PropertyDescriptor[] propertyDescriptors =
+                                    beanInfo.getPropertyDescriptors();
 
-	static {
-		TEST_DATA.put(Object.class, new Object[] { null });
+                            if (propertyDescriptors != null) {
+                                for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                                    final Method readMethod =
+                                            propertyDescriptor.getReadMethod();
 
-		TEST_DATA.put(boolean.class, new boolean[] { true, false });
+                                    if (readMethod != null) {
+                                        try {
+                                            readMethod.invoke(exercisedObject);
+                                        } catch (final IllegalArgumentException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        } catch (final InvocationTargetException e) {
+                                            acceptOrRethrow(readMethod, e);
+                                        }
+                                    }
 
-		TEST_DATA.put(byte.class, new byte[] { Byte.MIN_VALUE, Byte.MAX_VALUE });
+                                    final Method writeMethod =
+                                            propertyDescriptor.getWriteMethod();
 
-		TEST_DATA.put(char.class, new char[] { Character.MIN_VALUE,
-				Character.MAX_VALUE });
+                                    if (writeMethod != null) {
+                                        final Class<?> setterParameterClass =
+                                                writeMethod.getParameterTypes()[0];
 
-		TEST_DATA.put(double.class, new double[] { Double.MIN_VALUE,
-				Double.MAX_VALUE });
+                                        final Object testValues =
+                                                getTestDataFor(setterParameterClass);
 
-		TEST_DATA
-				.put(float.class, new float[] { Float.MIN_VALUE, Float.MAX_VALUE });
+                                        final int testValuesCount =
+                                                Array.getLength(testValues);
+                                        for (int i = 0; i < testValuesCount; i++) {
+                                            try {
+                                                writeMethod.invoke(
+                                                        exercisedObject,
+                                                        Array.get(testValues, i));
+                                            } catch (final ArrayIndexOutOfBoundsException e) {
+                                                // TODO Auto-generated catch
+                                                // block
+                                                e.printStackTrace();
+                                            } catch (final IllegalArgumentException e) {
+                                                // TODO Auto-generated catch
+                                                // block
+                                                e.printStackTrace();
+                                            } catch (final InvocationTargetException e) {
+                                                acceptOrRethrow(writeMethod, e);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
-		TEST_DATA
-				.put(int.class, new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE });
+                        } catch (final IntrospectionException ie) {
+                            // TODO Auto-generated catch block
+                            ie.printStackTrace();
+                        }
+                    }
+                }
 
-		TEST_DATA.put(long.class, new long[] { Long.MIN_VALUE, Long.MAX_VALUE });
+            } catch (final IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (final IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
-		TEST_DATA
-				.put(short.class, new short[] { Short.MIN_VALUE, Short.MAX_VALUE });
+    }
 
-		TEST_DATA.put(BigInteger.class, new BigInteger[] { null, BigInteger.ZERO });
-		TEST_DATA.put(BigDecimal.class, new BigDecimal[] { null, BigDecimal.ZERO });
+    private static final Map<Class<?>, Object> TEST_DATA =
+            new HashMap<Class<?>, Object>();
 
-		TEST_DATA.put(String.class, new String[] { null, "" });
+    static {
+        TEST_DATA.put(Object.class, new Object[] { null });
 
-		TEST_DATA.put(List.class, new List<?>[] { null, Collections.EMPTY_LIST });
-		TEST_DATA.put(Set.class, new Set<?>[] { null, Collections.EMPTY_SET });
-		TEST_DATA.put(Map.class, new Map<?, ?>[] { null, Collections.EMPTY_MAP });
-		TEST_DATA.put(Collection.class, TEST_DATA.get(List.class));
+        TEST_DATA.put(boolean.class, new boolean[] { true, false });
 
-		final Map<Class<?>, Object> wrappedTestData = new HashMap<Class<?>, Object>();
+        TEST_DATA.put(byte.class, new byte[] { Byte.MIN_VALUE, Byte.MAX_VALUE });
 
-		for (final Map.Entry<Class<?>, Object> testValueEntry : TEST_DATA
-				.entrySet()) {
-			final Class<?> testClass = testValueEntry.getKey();
+        TEST_DATA.put(char.class, new char[] { Character.MIN_VALUE,
+                Character.MAX_VALUE });
 
-			if (testClass.isPrimitive()) {
-				final Class<?> wrapperClass = getWrapperClassFor(testClass);
+        TEST_DATA.put(double.class, new double[] { Double.MIN_VALUE,
+                Double.MAX_VALUE });
 
-				if (wrapperClass != null) {
-					final Object testValues = testValueEntry.getValue();
-					final int testValuesCount = Array.getLength(testValues);
+        TEST_DATA.put(float.class, new float[] { Float.MIN_VALUE,
+                Float.MAX_VALUE });
 
-					final Object[] wrappedTestValues = new Object[1 + testValuesCount];
-					wrappedTestValues[0] = null;
+        TEST_DATA.put(int.class, new int[] { Integer.MIN_VALUE,
+                Integer.MAX_VALUE });
 
-					try {
-						final Constructor<?> constructor = wrapperClass
-								.getConstructor(testClass);
+        TEST_DATA.put(long.class, new long[] { Long.MIN_VALUE, Long.MAX_VALUE });
 
-						for (int i = 0; i < testValuesCount; i++) {
-							wrappedTestValues[1 + i] = constructor.newInstance(Array.get(
-									testValues, i));
-						}
+        TEST_DATA.put(short.class, new short[] { Short.MIN_VALUE,
+                Short.MAX_VALUE });
 
-					} catch (final SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final NoSuchMethodException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final ArrayIndexOutOfBoundsException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (final InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+        TEST_DATA.put(BigInteger.class, new BigInteger[] { null,
+                BigInteger.ZERO });
+        TEST_DATA.put(BigDecimal.class, new BigDecimal[] { null,
+                BigDecimal.ZERO });
 
-					wrappedTestData.put(wrapperClass, wrappedTestValues);
-				}
-			}
-		}
+        TEST_DATA.put(String.class, new String[] { null, "" });
+        TEST_DATA.put(Date.class, new Date[] { null, new Date(Long.MIN_VALUE),
+                new Date(Long.MAX_VALUE) });
 
-		TEST_DATA.putAll(wrappedTestData);
-	}
+        TEST_DATA.put(List.class,
+                new List<?>[] { null, Collections.EMPTY_LIST });
+        TEST_DATA.put(Set.class, new Set<?>[] { null, Collections.EMPTY_SET });
+        TEST_DATA.put(Map.class,
+                new Map<?, ?>[] { null, Collections.EMPTY_MAP });
+        TEST_DATA.put(Collection.class, TEST_DATA.get(List.class));
 
-	private static Class<?> getWrapperClassFor(final Class<?> primitiveClass) {
-		if (primitiveClass.equals(boolean.class)) {
-			return Boolean.class;
-		}
-		if (primitiveClass.equals(byte.class)) {
-			return Byte.class;
-		}
-		if (primitiveClass.equals(char.class)) {
-			return Character.class;
-		}
-		if (primitiveClass.equals(double.class)) {
-			return Double.class;
-		}
-		if (primitiveClass.equals(float.class)) {
-			return Float.class;
-		}
-		if (primitiveClass.equals(int.class)) {
-			return Integer.class;
-		}
-		if (primitiveClass.equals(long.class)) {
-			return Long.class;
-		}
-		if (primitiveClass.equals(short.class)) {
-			return Short.class;
-		}
+        final Map<Class<?>, Object> wrappedTestData =
+                new HashMap<Class<?>, Object>();
 
-		return null;
-	}
+        for (final Map.Entry<Class<?>, Object> testValueEntry : TEST_DATA.entrySet()) {
+            final Class<?> testClass = testValueEntry.getKey();
+
+            if (testClass.isPrimitive()) {
+                final Class<?> wrapperClass = getWrapperClassFor(testClass);
+
+                if (wrapperClass != null) {
+                    final Object testValues = testValueEntry.getValue();
+                    final int testValuesCount = Array.getLength(testValues);
+
+                    final Object[] wrappedTestValues =
+                            new Object[1 + testValuesCount];
+                    wrappedTestValues[0] = null;
+
+                    try {
+                        final Constructor<?> constructor =
+                                wrapperClass.getConstructor(testClass);
+
+                        for (int i = 0; i < testValuesCount; i++) {
+                            wrappedTestValues[1 + i] =
+                                    constructor.newInstance(Array.get(
+                                            testValues, i));
+                        }
+
+                    } catch (final SecurityException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final NoSuchMethodException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final ArrayIndexOutOfBoundsException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final IllegalArgumentException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final InstantiationException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final IllegalAccessException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (final InvocationTargetException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    wrappedTestData.put(wrapperClass, wrappedTestValues);
+                }
+            }
+        }
+
+        TEST_DATA.putAll(wrappedTestData);
+    }
+
+    private static Class<?> getWrapperClassFor(final Class<?> primitiveClass) {
+        if (primitiveClass.equals(boolean.class)) {
+            return Boolean.class;
+        }
+        if (primitiveClass.equals(byte.class)) {
+            return Byte.class;
+        }
+        if (primitiveClass.equals(char.class)) {
+            return Character.class;
+        }
+        if (primitiveClass.equals(double.class)) {
+            return Double.class;
+        }
+        if (primitiveClass.equals(float.class)) {
+            return Float.class;
+        }
+        if (primitiveClass.equals(int.class)) {
+            return Integer.class;
+        }
+        if (primitiveClass.equals(long.class)) {
+            return Long.class;
+        }
+        if (primitiveClass.equals(short.class)) {
+            return Short.class;
+        }
+
+        return null;
+    }
+
+    private static Object getTestDataFor(final Class<?> targetClass) {
+        final Object testValues = TEST_DATA.get(targetClass);
+
+        return testValues != null ? testValues : TEST_DATA.get(Object.class);
+    }
 }
