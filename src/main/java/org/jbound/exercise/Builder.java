@@ -12,7 +12,7 @@ import org.jbound.api.Restriction;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public final class ExercisesBuilder implements Restriction, Runnable {
+public final class Builder implements Restriction, Runnable {
 
 	private final List<Class<?>> exercisedClasses;
 
@@ -20,7 +20,7 @@ public final class ExercisesBuilder implements Restriction, Runnable {
 
 	private final Set<String> accepted;
 
-	public ExercisesBuilder(final List<Class<?>> exercisedClasses) {
+	public Builder(final List<Class<?>> exercisedClasses) {
 		this.exercisedClasses = exercisedClasses;
 		skipped = EnumSet.noneOf(EXERCISE.class);
 		accepted = new HashSet<String>();
@@ -37,7 +37,7 @@ public final class ExercisesBuilder implements Restriction, Runnable {
 	}
 
 	public void run() {
-		new ExercisesRunner(exercisedClasses, skipped, accepted).run();
+		new Runner(exercisedClasses, skipped, accepted).run();
 	}
 
 	public Restriction acceptingGenericExceptionsFrom(

@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jbound.exercise.ExercisesBuilder;
+import org.jbound.exercise.Builder;
 
 /**
  * @author David Dossot (david@dossot.net)
  */
 public class Exercises {
 
-	private final List<ExercisesBuilder> exercisesBuilders;
+	private final List<Builder> exercisesBuilders;
 
 	public Exercises() {
-		exercisesBuilders = new ArrayList<ExercisesBuilder>();
+		exercisesBuilders = new ArrayList<Builder>();
 	}
 
 	public void run() {
-		for (final ExercisesBuilder exercisesBuilder : exercisesBuilders) {
+		for (final Builder exercisesBuilder : exercisesBuilders) {
 			exercisesBuilder.run();
 		}
 	}
@@ -46,7 +46,7 @@ public class Exercises {
 		exercisedClasses.add(exercisedClass);
 		exercisedClasses.addAll(Arrays.asList(otherExercisedClasses));
 
-		final ExercisesBuilder builder = new ExercisesBuilder(exercisedClasses);
+		final Builder builder = new Builder(exercisedClasses);
 		exercisesBuilders.add(builder);
 		return builder;
 	}

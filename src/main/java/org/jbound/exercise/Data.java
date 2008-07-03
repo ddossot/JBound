@@ -2,7 +2,6 @@ package org.jbound.exercise;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -17,31 +16,33 @@ import java.util.Set;
  * @author David Dossot (david@dossot.net)
  */
 final class Data {
-    private static final Map<Class<?>, Object> TEST_DATA =
-            new HashMap<Class<?>, Object>();
+    private static final Map<Class<?>, Object[]> TEST_DATA =
+            new HashMap<Class<?>, Object[]>();
 
     static {
         TEST_DATA.put(Object.class, new Object[] { null });
 
-        TEST_DATA.put(boolean.class, new boolean[] { true, false });
+        TEST_DATA.put(boolean.class, new Object[] { true, false });
 
-        TEST_DATA.put(byte.class, new byte[] { Byte.MIN_VALUE, Byte.MAX_VALUE });
+        TEST_DATA.put(byte.class,
+                new Object[] { Byte.MIN_VALUE, Byte.MAX_VALUE });
 
-        TEST_DATA.put(char.class, new char[] { Character.MIN_VALUE,
+        TEST_DATA.put(char.class, new Object[] { Character.MIN_VALUE,
                 Character.MAX_VALUE });
 
-        TEST_DATA.put(double.class, new double[] { Double.MIN_VALUE,
+        TEST_DATA.put(double.class, new Object[] { Double.MIN_VALUE,
                 Double.MAX_VALUE });
 
-        TEST_DATA.put(float.class, new float[] { Float.MIN_VALUE,
+        TEST_DATA.put(float.class, new Object[] { Float.MIN_VALUE,
                 Float.MAX_VALUE });
 
-        TEST_DATA.put(int.class, new int[] { Integer.MIN_VALUE,
+        TEST_DATA.put(int.class, new Object[] { Integer.MIN_VALUE,
                 Integer.MAX_VALUE });
 
-        TEST_DATA.put(long.class, new long[] { Long.MIN_VALUE, Long.MAX_VALUE });
+        TEST_DATA.put(long.class,
+                new Object[] { Long.MIN_VALUE, Long.MAX_VALUE });
 
-        TEST_DATA.put(short.class, new short[] { Short.MIN_VALUE,
+        TEST_DATA.put(short.class, new Object[] { Short.MIN_VALUE,
                 Short.MAX_VALUE });
 
         TEST_DATA.put(BigInteger.class, new BigInteger[] { null,
@@ -60,10 +61,10 @@ final class Data {
                 new Map<?, ?>[] { null, Collections.EMPTY_MAP });
         TEST_DATA.put(Collection.class, TEST_DATA.get(List.class));
 
-        final Map<Class<?>, Object> wrappedTestData =
-                new HashMap<Class<?>, Object>();
+        final Map<Class<?>, Object[]> wrappedTestData =
+                new HashMap<Class<?>, Object[]>();
 
-        for (final Map.Entry<Class<?>, Object> testValueEntry : TEST_DATA.entrySet()) {
+        for (final Map.Entry<Class<?>, Object[]> testValueEntry : TEST_DATA.entrySet()) {
             final Class<?> testClass = testValueEntry.getKey();
 
             if (testClass.isPrimitive()) {
@@ -87,27 +88,8 @@ final class Data {
                                             testValues, i));
                         }
 
-                    } catch (final SecurityException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final NoSuchMethodException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final ArrayIndexOutOfBoundsException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final IllegalArgumentException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final InstantiationException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final IllegalAccessException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (final InvocationTargetException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    } catch (final Exception e) {
+                        Support.handleInternalException(e);
                     }
 
                     wrappedTestData.put(wrapperClass, wrappedTestValues);
@@ -122,8 +104,8 @@ final class Data {
         throw new UnsupportedOperationException();
     }
 
-    static Object getTestDataFor(final Class<?> targetClass) {
-        final Object testValues = TEST_DATA.get(targetClass);
+    static Object[] getTestDataFor(final Class<?> targetClass) {
+        final Object[] testValues = TEST_DATA.get(targetClass);
 
         if ((testValues == null) && (targetClass.getName().startsWith("java"))) {
             System.err.println(targetClass
