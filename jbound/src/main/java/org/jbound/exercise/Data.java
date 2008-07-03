@@ -1,4 +1,4 @@
-package org.jbound.internal;
+package org.jbound.exercise;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

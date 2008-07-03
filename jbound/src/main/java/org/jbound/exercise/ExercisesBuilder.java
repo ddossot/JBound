@@ -1,4 +1,4 @@
-package org.jbound.internal;
+package org.jbound.exercise;
 
 import java.util.Arrays;
 import java.util.EnumSet;
