@@ -4,6 +4,7 @@ import org.jbound.api.EXERCISE;
 import org.jbound.api.Exercises;
 import org.jbound.api.JBound;
 import org.jbound.subject.DefensiveBean;
+import org.jbound.subject.DefensiveBeanWithWeakConstructor;
 import org.jbound.subject.FragileBean;
 import org.jbound.subject.ImmutableBean;
 import org.jbound.subject.MutableBean;
@@ -17,7 +18,7 @@ public class AllBeanTests {
         JBound.run(new Exercises() {
             {
                 forClasses(MutableBean.class, PlainMutableBean.class,
-                        ImmutableBean.class);
+                        ImmutableBean.class, DefensiveBean.class);
             }
         });
     }
@@ -36,10 +37,11 @@ public class AllBeanTests {
     }
 
     @Test
-    public void exerciseBeanWithSkipping() {
+    public void exerciseBeanWithAccepting() {
         JBound.run(new Exercises() {
             {
-                forClass(DefensiveBean.class);
+                forClass(DefensiveBeanWithWeakConstructor.class).acceptingGenericExceptionsFrom(
+                        "public org.jbound.subject.DefensiveBeanWithWeakConstructor(java.lang.String,int,java.lang.Integer,java.util.List)");
             }
         });
     }
