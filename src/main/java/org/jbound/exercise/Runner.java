@@ -65,7 +65,7 @@ final class Runner implements Runnable {
         // one
         final AssertionError assertionError =
                 new AssertionError("Received a generic " + iteCause.getClass()
-                        + " when calling " + contextAsString);
+                        + " when calling: " + contextAsString);
 
         assertionError.initCause(iteCause);
         throw assertionError;

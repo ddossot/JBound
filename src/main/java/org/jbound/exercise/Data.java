@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -21,6 +22,7 @@ final class Data {
 
     static {
         TEST_DATA.put(Object.class, new Object[] { null });
+        TEST_DATA.put(Class.class, new Class[] { null });
 
         TEST_DATA.put(boolean.class, new Object[] { true, false });
 
@@ -53,6 +55,15 @@ final class Data {
         TEST_DATA.put(String.class, new String[] { null, "" });
         TEST_DATA.put(Date.class, new Date[] { null, new Date(Long.MIN_VALUE),
                 new Date(Long.MAX_VALUE) });
+
+        final Calendar minCalendar = Calendar.getInstance();
+        minCalendar.setTimeInMillis(Long.MIN_VALUE);
+
+        final Calendar maxCalendar = Calendar.getInstance();
+        maxCalendar.setTimeInMillis(Long.MAX_VALUE);
+
+        TEST_DATA.put(Calendar.class, new Calendar[] { null, minCalendar,
+                maxCalendar });
 
         TEST_DATA.put(List.class,
                 new List<?>[] { null, Collections.EMPTY_LIST });
