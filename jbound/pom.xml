@@ -10,6 +10,33 @@
 	<name>jBound</name>
 	<url>http://jbound.org</url>
 
+	<issueManagement>
+		<system>Assembla</system>
+		<url>http://www.assembla.com/spaces/jbound/tickets</url>
+	</issueManagement>
+
+	<scm>
+		<connection>
+			scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound
+		</connection>
+		<url>http://svn.assembla.com/svn/jbound/trunk/jbound</url>
+		<developerConnection>
+			scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound
+		</developerConnection>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>ddossot</id>
+			<name>David Dossot</name>
+			<email>david@dossot.net</email>
+			<url>http://dossot.net</url>
+			<roles>
+				<role>Monkey</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<build>
 		<plugins>
 			<plugin>
