@@ -4,7 +4,7 @@
 	<groupId>org.jbound</groupId>
 	<artifactId>jbound</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>jBound</name>
 	<url>http://jbound.org</url>
 
@@ -14,9 +14,9 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:svn:http://svn.assembla.com/svn/jbound/tags/jbound-1.0</connection>
-		<url>http://svn.assembla.com/svn/jbound/tags/jbound-1.0</url>
-		<developerConnection>scm:svn:http://svn.assembla.com/svn/jbound/tags/jbound-1.0</developerConnection>
+		<connection>scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound</connection>
+		<url>http://svn.assembla.com/svn/jbound/trunk/jbound</url>
+		<developerConnection>scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound</developerConnection>
 	</scm>
 
 	<developers>
