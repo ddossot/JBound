@@ -4,9 +4,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,9 +54,13 @@ final class Data {
         TEST_DATA.put(BigDecimal.class, new BigDecimal[] { null,
                 BigDecimal.ZERO });
 
-        TEST_DATA.put(String.class, new String[] { null, "" });
+        TEST_DATA.put(String.class, new String[] { null, "", " " });
         TEST_DATA.put(Date.class, new Date[] { null, new Date(Long.MIN_VALUE),
                 new Date(Long.MAX_VALUE) });
+
+        TEST_DATA.put(Currency.class, new Currency[] { null });
+        TEST_DATA.put(RoundingMode.class, new RoundingMode[] { null,
+                RoundingMode.UNNECESSARY });
 
         final Calendar minCalendar = Calendar.getInstance();
         minCalendar.setTimeInMillis(Long.MIN_VALUE);
