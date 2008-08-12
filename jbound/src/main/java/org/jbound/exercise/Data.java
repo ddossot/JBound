@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,6 +71,10 @@ final class Data {
 
         TEST_DATA.put(Calendar.class, new Calendar[] { null, minCalendar,
                 maxCalendar });
+
+        TEST_DATA.put(Timestamp.class, new Timestamp[] { null,
+                new Timestamp(minCalendar.getTimeInMillis()),
+                new Timestamp(maxCalendar.getTimeInMillis()) });
 
         TEST_DATA.put(List.class,
                 new List<?>[] { null, Collections.EMPTY_LIST });
