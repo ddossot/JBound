@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jbound.subject.ImmutableBean;
-
 /**
  * @author David Dossot (david@dossot.net)
  */
@@ -134,12 +132,6 @@ final class Data {
         }
 
         return testValues != null ? testValues : TEST_DATA.get(Object.class);
-    }
-
-    static void registerCustomDataType(final Class<ImmutableBean> customClass,
-            final Object... customClassValues) {
-
-        TEST_DATA.put(customClass, customClassValues);
     }
 
     private static Class<?> getWrapperClassFor(final Class<?> primitiveClass) {
