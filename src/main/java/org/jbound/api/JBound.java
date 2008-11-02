@@ -3,8 +3,6 @@ package org.jbound.api;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jbound.subject.ImmutableBean;
-
 /**
  * @author David Dossot (david@dossot.net)
  */
@@ -16,8 +14,7 @@ public final class JBound {
         exercises.run(CUSTOM_TEST_DATA);
     }
 
-    public static void registerCustomDataType(
-            final Class<ImmutableBean> customClass,
+    public static void registerCustomDataType(final Class<?> customClass,
             final Object... customClassValues) {
 
         CUSTOM_TEST_DATA.put(customClass, customClassValues);
