@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jbound.api.EXERCISE;
@@ -29,12 +30,16 @@ final class Runner implements Runnable {
 
     private final Set<EXERCISE> skipped;
 
+    private final Map<Class<?>, Object[]> customTestData;
+
     public Runner(final List<Class<?>> exercisedClasses,
-            final Set<EXERCISE> skipped, final Set<String> accepted) {
+            final Set<EXERCISE> skipped, final Set<String> accepted,
+            final Map<Class<?>, Object[]> customTestData) {
 
         this.exercisedClasses = exercisedClasses;
         this.skipped = skipped;
         this.accepted = accepted;
+        this.customTestData = customTestData;
     }
 
     private void acceptOrRethrow(final AccessibleObject context,
@@ -63,9 +68,9 @@ final class Runner implements Runnable {
 
         // this is an exception without a message, so most probably a generic
         // one
-        final AssertionError assertionError =
-                new AssertionError("Received a generic " + iteCause.getClass()
-                        + " when calling: " + contextAsString);
+        final AssertionError assertionError = new AssertionError(
+                "Received a generic " + iteCause.getClass() + " when calling: "
+                        + contextAsString);
 
         assertionError.initCause(iteCause);
         throw assertionError;
@@ -81,20 +86,19 @@ final class Runner implements Runnable {
 
         if (parameters.size() >= constructor.getParameterTypes().length) {
 
-            final Object newInstance =
-                    instantiateClass(constructor, parameters);
+            final Object newInstance = instantiateClass(constructor, parameters);
 
             if (newInstance != null) {
                 result.add(newInstance);
             }
 
         } else {
-            final Class<?> parameterType =
-                    constructor.getParameterTypes()[parameters.size()];
+            final Class<?> parameterType = constructor.getParameterTypes()[parameters
+                    .size()];
 
-            for (final Object testValue : Data.getTestDataFor(parameterType)) {
-                final List<Object> nextParameters =
-                        new ArrayList<Object>(parameters);
+            for (final Object testValue : getTestDataFor(parameterType)) {
+                final List<Object> nextParameters = new ArrayList<Object>(
+                        parameters);
 
                 nextParameters.add(testValue);
                 result.addAll(newInstancesFrom(constructor, nextParameters));
@@ -125,8 +129,11 @@ final class Runner implements Runnable {
     private List<Object> newInstancesOf(final Class<?> exercisedClass) {
         final List<Object> result = new ArrayList<Object>();
 
-        for (final Constructor<?> constructor : exercisedClass.getConstructors()) {
-            result.addAll(newInstancesFrom(constructor, new ArrayList<Object>()));
+        for (final Constructor<?> constructor : exercisedClass
+                .getConstructors()) {
+            result
+                    .addAll(newInstancesFrom(constructor,
+                            new ArrayList<Object>()));
         }
 
         return Collections.unmodifiableList(result);
@@ -165,8 +172,8 @@ final class Runner implements Runnable {
 
         if (!skipped.contains(EXERCISE.BEAN_PROPERTIES)) {
             try {
-                final PropertyDescriptor[] propertyDescriptors =
-                        Introspector.getBeanInfo(exercisedClass).getPropertyDescriptors();
+                final PropertyDescriptor[] propertyDescriptors = Introspector
+                        .getBeanInfo(exercisedClass).getPropertyDescriptors();
 
                 if (propertyDescriptors != null) {
                     exerciseBeanProperties(exercisedObject, propertyDescriptors);
@@ -193,10 +200,10 @@ final class Runner implements Runnable {
         final Method writeMethod = propertyDescriptor.getWriteMethod();
 
         if (writeMethod != null) {
-            final Class<?> setterParameterClass =
-                    writeMethod.getParameterTypes()[0];
+            final Class<?> setterParameterClass = writeMethod
+                    .getParameterTypes()[0];
 
-            for (final Object testValue : Data.getTestDataFor(setterParameterClass)) {
+            for (final Object testValue : getTestDataFor(setterParameterClass)) {
                 try {
                     writeMethod.invoke(exercisedObject, testValue);
                 } catch (final IllegalAccessException e) {
@@ -208,6 +215,16 @@ final class Runner implements Runnable {
                 }
             }
         }
+    }
+
+    private Object[] getTestDataFor(final Class<?> targetClass) {
+        final Object[] testData = customTestData.get(targetClass);
+
+        if (testData != null) {
+            return testData;
+        }
+
+        return Data.getTestDataFor(targetClass);
     }
 
     private void exercisedReadMethod(final Object exercisedObject,
