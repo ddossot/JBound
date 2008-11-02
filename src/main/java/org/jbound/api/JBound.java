@@ -1,12 +1,26 @@
 package org.jbound.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jbound.subject.ImmutableBean;
+
 /**
  * @author David Dossot (david@dossot.net)
  */
 public final class JBound {
 
-	public static void run(final Exercises exercises) {
-		exercises.run();
-	}
+    private static final Map<Class<?>, Object[]> CUSTOM_TEST_DATA = new HashMap<Class<?>, Object[]>();
+
+    public static void run(final Exercises exercises) {
+        exercises.run(CUSTOM_TEST_DATA);
+    }
+
+    public static void registerCustomDataType(
+            final Class<ImmutableBean> customClass,
+            final Object... customClassValues) {
+
+        CUSTOM_TEST_DATA.put(customClass, customClassValues);
+    }
 
 }

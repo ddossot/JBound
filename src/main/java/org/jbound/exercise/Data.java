@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jbound.subject.ImmutableBean;
+
 /**
  * @author David Dossot (david@dossot.net)
  */
 final class Data {
-    private static final Map<Class<?>, Object[]> TEST_DATA =
-            new HashMap<Class<?>, Object[]>();
+    private static final Map<Class<?>, Object[]> TEST_DATA = new HashMap<Class<?>, Object[]>();
 
     static {
         TEST_DATA.put(Object.class, new Object[] { null });
@@ -83,10 +84,10 @@ final class Data {
                 new Map<?, ?>[] { null, Collections.EMPTY_MAP });
         TEST_DATA.put(Collection.class, TEST_DATA.get(List.class));
 
-        final Map<Class<?>, Object[]> wrappedTestData =
-                new HashMap<Class<?>, Object[]>();
+        final Map<Class<?>, Object[]> wrappedTestData = new HashMap<Class<?>, Object[]>();
 
-        for (final Map.Entry<Class<?>, Object[]> testValueEntry : TEST_DATA.entrySet()) {
+        for (final Map.Entry<Class<?>, Object[]> testValueEntry : TEST_DATA
+                .entrySet()) {
             final Class<?> testClass = testValueEntry.getKey();
 
             if (testClass.isPrimitive()) {
@@ -96,18 +97,16 @@ final class Data {
                     final Object testValues = testValueEntry.getValue();
                     final int testValuesCount = Array.getLength(testValues);
 
-                    final Object[] wrappedTestValues =
-                            new Object[1 + testValuesCount];
+                    final Object[] wrappedTestValues = new Object[1 + testValuesCount];
                     wrappedTestValues[0] = null;
 
                     try {
-                        final Constructor<?> constructor =
-                                wrapperClass.getConstructor(testClass);
+                        final Constructor<?> constructor = wrapperClass
+                                .getConstructor(testClass);
 
                         for (int i = 0; i < testValuesCount; i++) {
-                            wrappedTestValues[1 + i] =
-                                    constructor.newInstance(Array.get(
-                                            testValues, i));
+                            wrappedTestValues[1 + i] = constructor
+                                    .newInstance(Array.get(testValues, i));
                         }
 
                     } catch (final Exception e) {
@@ -135,6 +134,12 @@ final class Data {
         }
 
         return testValues != null ? testValues : TEST_DATA.get(Object.class);
+    }
+
+    static void registerCustomDataType(final Class<ImmutableBean> customClass,
+            final Object... customClassValues) {
+
+        TEST_DATA.put(customClass, customClassValues);
     }
 
     private static Class<?> getWrapperClassFor(final Class<?> primitiveClass) {
