@@ -1,62 +1,103 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jbound</groupId>
-	<artifactId>jbound</artifactId>
-	<packaging>jar</packaging>
-	<version>1.2-SNAPSHOT</version>
-	<name>jBound</name>
-	<url>http://jbound.org</url>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.dossot</groupId>
+    <artifactId>jbound</artifactId>
+    <version>1.2-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<issueManagement>
-		<system>Assembla</system>
-		<url>http://www.assembla.com/spaces/jbound/tickets</url>
-	</issueManagement>
+    <name>jBound</name>
+    <description>Basic generative testing for JavaBeans.</description>
+    <url>https://github.com/ddossot/JBound</url>
+    <inceptionYear>2008</inceptionYear>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/ddossot/JBound</url>
+    </issueManagement>
+    <ciManagement>
+        <system>TravisCI</system>
+        <url>https://travis-ci.org/ddossot/JBound</url>
+    </ciManagement>
 
-	<scm>
-		<connection>scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound</connection>
-		<url>http://svn.assembla.com/svn/jbound/trunk/jbound</url>
-		<developerConnection>scm:svn:http://svn.assembla.com/svn/jbound/trunk/jbound</developerConnection>
-	</scm>
+    <properties>
+        <java.version>1.7</java.version>
+    </properties>
 
-	<developers>
-		<developer>
-			<id>ddossot</id>
-			<name>David Dossot</name>
-			<email>david@dossot.net</email>
-			<url>http://dossot.net</url>
-			<roles>
-				<role>Monkey</role>
-			</roles>
-		</developer>
-	</developers>
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <url>http://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <developers>
+        <developer>
+            <id>ddossot</id>
+            <name>David Dossot</name>
+            <email>david@dossot.net</email>
+            <url>http://david.dossot.net</url>
+        </developer>
+    </developers>
 
-	<dependencies>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>[1.0,)</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>[4.0.0,)</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <scm>
+        <connection>scm:git:git@github.com:ddossot/JBound.git</connection>
+        <developerConnection>scm:git:git@github.com:ddossot/JBound.git</developerConnection>
+        <url>git@github.com:ddossot/JBound.git</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.lewisd</groupId>
+                <artifactId>lint-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <id>pom-lint</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

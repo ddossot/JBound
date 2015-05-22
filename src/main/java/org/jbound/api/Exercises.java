@@ -1,3 +1,4 @@
+
 package org.jbound.api;
 
 import java.util.ArrayList;
@@ -10,38 +11,44 @@ import org.jbound.exercise.Builder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class Exercises {
-
+public class Exercises
+{
     private final List<Builder> exercisesBuilders;
 
-    public Exercises() {
+    public Exercises()
+    {
         exercisesBuilders = new ArrayList<Builder>();
     }
 
-    public void run(final Map<Class<?>, Object[]> customTestData) {
-        for (final Builder exercisesBuilder : exercisesBuilders) {
+    public void run(final Map<Class<?>, Object[]> customTestData)
+    {
+        for (final Builder exercisesBuilder : exercisesBuilders)
+        {
             exercisesBuilder.run(customTestData);
         }
     }
 
-    protected Restriction forClass(final Class<?> exercisedClass) {
-        if (exercisedClass == null) {
+    protected Restriction forClass(final Class<?> exercisedClass)
+    {
+        if (exercisedClass == null)
+        {
             throw new NullPointerException("exercisedClass can not be null");
         }
 
         return forClasses(exercisedClass);
     }
 
-    protected Restriction forClasses(final Class<?> exercisedClass,
-            final Class<?>... otherExercisedClasses) {
+    protected Restriction forClasses(final Class<?> exercisedClass, final Class<?>... otherExercisedClasses)
+    {
 
-        if (exercisedClass == null) {
+        if (exercisedClass == null)
+        {
             throw new NullPointerException("exercisedClass can not be null");
         }
 
-        if (otherExercisedClasses == null) {
-            throw new NullPointerException(
-                    "otherExercisedClasses can not be null");
+        if (otherExercisedClasses == null)
+        {
+            throw new NullPointerException("otherExercisedClasses can not be null");
         }
 
         final List<Class<?>> exercisedClasses = new ArrayList<Class<?>>();

@@ -1,3 +1,4 @@
+
 package org.jbound.subject;
 
 import java.util.List;
@@ -5,59 +6,68 @@ import java.util.List;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class PlainMutableBean {
+public class PlainMutableBean
+{
+    private String string;
+    private int primitiveInteger;
+    private Integer integer;
+    private List<Long> longs;
 
-	private String string;
+    public PlainMutableBean()
+    {
+        // NOOP
+    }
 
-	private int primitiveInteger;
+    public PlainMutableBean(final String string,
+                            final int primitiveInteger,
+                            final Integer integer,
+                            final List<Long> longs)
+    {
 
-	private Integer integer;
+        this.string = string;
+        this.primitiveInteger = primitiveInteger;
+        this.integer = integer;
+        this.longs = longs;
+    }
 
-	private List<Long> longs;
+    public String getString()
+    {
+        return string;
+    }
 
-	public PlainMutableBean() {
-		// NOOP
-	}
+    public void setString(final String string)
+    {
+        this.string = string;
+    }
 
-	public PlainMutableBean(final String string, final int primitiveInteger,
-			final Integer integer, final List<Long> longs) {
+    public int getPrimitiveInteger()
+    {
+        return primitiveInteger;
+    }
 
-		this.string = string;
-		this.primitiveInteger = primitiveInteger;
-		this.integer = integer;
-		this.longs = longs;
-	}
+    public void setPrimitiveInteger(final int primitiveInteger)
+    {
+        this.primitiveInteger = primitiveInteger;
+    }
 
-	public String getString() {
-		return string;
-	}
+    public Integer getInteger()
+    {
+        return integer;
+    }
 
-	public void setString(final String string) {
-		this.string = string;
-	}
+    public void setInteger(final Integer integer)
+    {
+        this.integer = integer;
+    }
 
-	public int getPrimitiveInteger() {
-		return primitiveInteger;
-	}
+    public List<Long> getLongs()
+    {
+        return longs;
+    }
 
-	public void setPrimitiveInteger(final int primitiveInteger) {
-		this.primitiveInteger = primitiveInteger;
-	}
-
-	public Integer getInteger() {
-		return integer;
-	}
-
-	public void setInteger(final Integer integer) {
-		this.integer = integer;
-	}
-
-	public List<Long> getLongs() {
-		return longs;
-	}
-
-	public void setLongs(final List<Long> longs) {
-		this.longs = longs;
-	}
+    public void setLongs(final List<Long> longs)
+    {
+        this.longs = longs;
+    }
 
 }
