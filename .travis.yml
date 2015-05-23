@@ -1,0 +1,10 @@
+language: java
+script: mvn package
+after_success:
+- echo "<settings><servers><server><id>ossrh</id><username>\${env.OSSRH_USER}</username><password>\${env.OSSRH_PASS}</password></server></servers></settings>"
+  > ~/settings.xml
+- mvn deploy --settings ~/settings.xml
+env:
+  global:
+  - secure: MbQC9wZRjYom+1/fqdYvBLJvbjrFrcG/qO7JN3i1nOBIW2PZYLYletlaTQ9D/3IAKozyHwJn69daZubcl0cPDOzAufNaimTxLGW1bnUNTcl9p3CVSEXX9Kyw5SSp3jr2rXWJVUqg3cUYbgP2nrw+LgH3vJ4OePh6NQdoMer0Z4M=
+  - secure: CUp0DOAa89LFrgfWsgnJa1AAqlif+8Zy8rWJw7QTP2iVBiHy/huQsP6xcnHvXElfV5sXXXSvTLRl8hDs3KBCh5Ij16ne81M/8iELNOxDWEkgQ1yrrUGYdMiy6IZdIQj6Popae9YJRID9u11NcC67CSazSRHRrO2lL+5FJz/D/L8=
