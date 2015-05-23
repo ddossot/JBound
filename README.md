@@ -10,12 +10,39 @@
  / / /_/ / /  / / /____\_\ \  / / /___/ / // / /___/ / // / /    / / / \ \ \__/ / /     
 / / /__\/ /  / / /__________\/ / /____\/ // / /____\/ // / /    / / /   \ \___\/ /      
 \/_______/   \/_____________/\/_________/ \/_________/ \/_/     \/_/     \/_____/       
-
 </pre>
+
+# JBound
+
+[![Build Status](https://travis-ci.org/ddossot/JBound.svg)](https://travis-ci.org/ddossot/JBound)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.dossot/jbound/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.dossot/jbound)
 
 JBound is a simple utility that performs boundary checks on domain model objects. It injects extreme values (minimum, maximum, null) in constructor arguments and setters. It also calls getters, `equals`, `hashCode` and `toString`.
 
 JBound ignores the actual outcome of these calls and only focuses on generic exceptions being thrown. If your application throws exceptions for bad data input with an explanation message, the exception will be considered to be purposeful. If the exception thrown has no message, it will be considered generic and an AssertionError will be thrown.
+
+
+## Usage
+
+Releases are available on Central.
+Snapshot builds are available in the Sonatype OSS Snapshots repository:
+
+```xml
+<repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+If you need to build the latest snapshot yourself, run:
+
+    mvn clean install
+
+
+## Examples
 
 Here is code sample for a JUnit4 test that exercises a few beans:
 
