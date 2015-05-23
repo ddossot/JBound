@@ -1,5 +1,5 @@
 
-package org.jbound.subject;
+package net.dossot.jbound.subject;
 
 import java.util.List;
 
@@ -8,22 +8,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class MutableBean
+public class ImmutableBean
 {
-    private String string;
-    private int primitiveInteger;
-    private Integer integer;
-    private List<Long> longs;
+    private final String string;
+    private final int primitiveInteger;
+    private final Integer integer;
+    private final List<Long> longs;
 
-    public MutableBean()
-    {
-        // NOOP
-    }
-
-    public MutableBean(final String string,
-                       final int primitiveInteger,
-                       final Integer integer,
-                       final List<Long> longs)
+    public ImmutableBean(final String string,
+                         final int primitiveInteger,
+                         final Integer integer,
+                         final List<Long> longs)
     {
 
         this.string = string;
@@ -37,19 +32,9 @@ public class MutableBean
         return string;
     }
 
-    public void setString(final String string)
-    {
-        this.string = string;
-    }
-
     public int getPrimitiveInteger()
     {
         return primitiveInteger;
-    }
-
-    public void setPrimitiveInteger(final int primitiveInteger)
-    {
-        this.primitiveInteger = primitiveInteger;
     }
 
     public Integer getInteger()
@@ -57,19 +42,9 @@ public class MutableBean
         return integer;
     }
 
-    public void setInteger(final Integer integer)
-    {
-        this.integer = integer;
-    }
-
     public List<Long> getLongs()
     {
         return longs;
-    }
-
-    public void setLongs(final List<Long> longs)
-    {
-        this.longs = longs;
     }
 
     @Override
@@ -96,7 +71,7 @@ public class MutableBean
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        final MutableBean other = (MutableBean) obj;
+        final ImmutableBean other = (ImmutableBean) obj;
         if (integer == null)
         {
             if (other.integer != null) return false;

@@ -1,5 +1,5 @@
 
-package org.jbound.subject;
+package net.dossot.jbound.subject;
 
 /**
  * @author David Dossot (david@dossot.net)

@@ -1,5 +1,5 @@
 
-package org.jbound.exercise;
+package net.dossot.jbound.exercise;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -9,10 +9,8 @@ import java.io.StringWriter;
  */
 final class Support
 {
-
     /**
-     * Handle JBound internal issues that should be reported but must not break
-     * people's builds.
+     * Handle JBound internal issues that should be reported but must not break people's builds.
      */
     static void handleInternalException(final Exception e)
     {
@@ -20,5 +18,10 @@ final class Support
         stringWriter.write("---------- Internal JBound issue - Please report! ----------\n");
         e.printStackTrace(new PrintWriter(stringWriter));
         System.err.println(stringWriter.toString());
+    }
+
+    private Support()
+    {
+        throw new UnsupportedOperationException();
     }
 }

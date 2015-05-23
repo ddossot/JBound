@@ -1,5 +1,5 @@
 
-package org.jbound.exercise;
+package net.dossot.jbound.exercise;
 
 import static java.util.Arrays.asList;
 
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jbound.api.EXERCISE;
-import org.jbound.api.Restriction;
+import net.dossot.jbound.api.EXERCISE;
+import net.dossot.jbound.api.Restriction;
 
 /**
  * @author David Dossot (david@dossot.net)

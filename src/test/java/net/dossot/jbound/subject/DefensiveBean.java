@@ -1,5 +1,5 @@
 
-package org.jbound.subject;
+package net.dossot.jbound.subject;
 
 import java.util.List;
 
@@ -8,25 +8,25 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class FragileBean
+public class DefensiveBean
 {
     private String string;
     private int primitiveInteger;
     private Integer integer;
     private List<Long> longs;
 
-    public FragileBean()
+    public DefensiveBean()
     {
         // NOOP
     }
 
-    public FragileBean(final String string,
-                       final int primitiveInteger,
-                       final Integer integer,
-                       final List<Long> longs)
+    public DefensiveBean(final String string,
+                         final int primitiveInteger,
+                         final Integer integer,
+                         final List<Long> longs)
     {
 
-        fragileMethod(string);
+        defensiveMethod(string);
 
         this.string = string;
         this.primitiveInteger = primitiveInteger;
@@ -34,20 +34,23 @@ public class FragileBean
         this.longs = longs;
     }
 
-    private void fragileMethod(final String string)
+    private void defensiveMethod(final String string)
     {
-        string.length();
+        if (string == null)
+        {
+            throw new NullPointerException("String can not be null!");
+        }
     }
 
     public String getString()
     {
-        fragileMethod(string);
+        defensiveMethod(string);
         return string;
     }
 
     public void setString(final String string)
     {
-        fragileMethod(string);
+        defensiveMethod(string);
         this.string = string;
     }
 
@@ -84,15 +87,12 @@ public class FragileBean
     @Override
     public String toString()
     {
-        fragileMethod(string);
         return ToStringBuilder.reflectionToString(this);
     }
 
     @Override
     public int hashCode()
     {
-        fragileMethod(string);
-
         final int prime = 31;
         int result = 1;
         result = prime * result + ((integer == null) ? 0 : integer.hashCode());
@@ -105,12 +105,10 @@ public class FragileBean
     @Override
     public boolean equals(final Object obj)
     {
-        fragileMethod(string);
-
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        final FragileBean other = (FragileBean) obj;
+        final DefensiveBean other = (DefensiveBean) obj;
         if (integer == null)
         {
             if (other.integer != null) return false;

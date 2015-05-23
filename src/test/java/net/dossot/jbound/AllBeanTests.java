@@ -1,16 +1,17 @@
 
-package org.jbound;
+package net.dossot.jbound;
 
-import org.jbound.api.EXERCISE;
-import org.jbound.api.Exercises;
-import org.jbound.api.JBound;
-import org.jbound.subject.BeanWithUnsupportedDataType;
-import org.jbound.subject.DefensiveBean;
-import org.jbound.subject.DefensiveBeanWithWeakConstructor;
-import org.jbound.subject.FragileBean;
-import org.jbound.subject.ImmutableBean;
-import org.jbound.subject.MutableBean;
-import org.jbound.subject.PlainMutableBean;
+import net.dossot.jbound.api.EXERCISE;
+import net.dossot.jbound.api.Exercises;
+import net.dossot.jbound.api.JBound;
+import net.dossot.jbound.subject.BeanWithUnsupportedDataType;
+import net.dossot.jbound.subject.DefensiveBean;
+import net.dossot.jbound.subject.DefensiveBeanWithWeakConstructor;
+import net.dossot.jbound.subject.FragileBean;
+import net.dossot.jbound.subject.ImmutableBean;
+import net.dossot.jbound.subject.MutableBean;
+import net.dossot.jbound.subject.PlainMutableBean;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 

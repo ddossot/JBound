@@ -1,5 +1,5 @@
 
-package org.jbound.subject;
+package net.dossot.jbound.subject;
 
 import java.util.List;
 
@@ -8,25 +8,23 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * @author David Dossot (david@dossot.net)
  */
-public class DefensiveBeanWithWeakConstructor
+public class MutableBean
 {
     private String string;
     private int primitiveInteger;
     private Integer integer;
     private List<Long> longs;
 
-    public DefensiveBeanWithWeakConstructor()
+    public MutableBean()
     {
         // NOOP
     }
 
-    public DefensiveBeanWithWeakConstructor(final String string,
-                                            final int primitiveInteger,
-                                            final Integer integer,
-                                            final List<Long> longs)
+    public MutableBean(final String string,
+                       final int primitiveInteger,
+                       final Integer integer,
+                       final List<Long> longs)
     {
-
-        string.toString();
 
         this.string = string;
         this.primitiveInteger = primitiveInteger;
@@ -34,23 +32,13 @@ public class DefensiveBeanWithWeakConstructor
         this.longs = longs;
     }
 
-    private void defensiveMethod(final String string)
-    {
-        if (string == null)
-        {
-            throw new NullPointerException("String can not be null!");
-        }
-    }
-
     public String getString()
     {
-        defensiveMethod(string);
         return string;
     }
 
     public void setString(final String string)
     {
-        defensiveMethod(string);
         this.string = string;
     }
 
@@ -108,7 +96,7 @@ public class DefensiveBeanWithWeakConstructor
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        final DefensiveBeanWithWeakConstructor other = (DefensiveBeanWithWeakConstructor) obj;
+        final MutableBean other = (MutableBean) obj;
         if (integer == null)
         {
             if (other.integer != null) return false;

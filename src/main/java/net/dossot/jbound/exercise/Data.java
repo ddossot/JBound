@@ -1,5 +1,5 @@
 
-package org.jbound.exercise;
+package net.dossot.jbound.exercise;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -27,7 +27,7 @@ final class Data
     static
     {
         TEST_DATA.put(Object.class, new Object[]{null});
-        TEST_DATA.put(Class.class, new Class[]{null});
+        TEST_DATA.put(Class.class, new Class<?>[]{null});
 
         TEST_DATA.put(boolean.class, new Object[]{true, false});
 

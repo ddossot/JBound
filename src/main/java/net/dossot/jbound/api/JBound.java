@@ -1,5 +1,5 @@
 
-package org.jbound.api;
+package net.dossot.jbound.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +18,11 @@ public final class JBound
 
     public static void registerCustomDataType(final Class<?> customClass, final Object... customClassValues)
     {
-
         CUSTOM_TEST_DATA.put(customClass, customClassValues);
     }
 
+    private JBound()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

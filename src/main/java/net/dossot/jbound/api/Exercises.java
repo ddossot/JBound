@@ -1,12 +1,12 @@
 
-package org.jbound.api;
+package net.dossot.jbound.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.jbound.exercise.Builder;
+import net.dossot.jbound.exercise.Builder;
 
 /**
  * @author David Dossot (david@dossot.net)

@@ -1,5 +1,5 @@
 
-package org.jbound.exercise;
+package net.dossot.jbound.exercise;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jbound.api.EXERCISE;
+import net.dossot.jbound.api.EXERCISE;
 
 /**
  * When we exercise a class, we do not care about the actual result of equal,
